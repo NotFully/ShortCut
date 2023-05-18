@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{ title }}
+{% endblock %} 
+{% block content %}
+  {% include 'posts/includes/switcher.html' %}
+  {% load thumbnail %}
+  {% for post in page_obj %}
+      <div class="container col-lg-9 col-sm-12">
+        <div class="d-flex flex-row bd-highlight mb-3">
+            {% thumbnail post.image "1920x1080" crop="center" upscale=True as im %}
+              <a href="{% url 'posts:post_detail' post.pk %}">
+                <img class="card-img my-2" src="{{ im.url }}" style="width: 400px; height: 225px;">
+              </a>
+            {% endthumbnail %}
+            <ul>
+              <b>{{ post.title }}</b>
+            <br>
+              <b>Автор:</b>
+              <a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a>
+            <br>
+              <b>Дата публикации:</b> {{ post.pub_date|date:"d E Y" }}
+            <br>
+              <b>Описание:</b> {{ post.description }}
+            <br>
+            {% if post.group %}
+              <p><b>Группа:</b>
+              <a href="{% url 'posts:group_list' post.group.slug %}">{{ post.group.title }}</a></p>
+
+            {% endif %}
+            </ul>
+            <p>{{ post.text|linebreaks }}</p>
+            {% if not forloop.last %}<hr>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %} 
+    

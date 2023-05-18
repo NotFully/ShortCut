@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}
+  Записи сообщества {{ group.title }}
+{% endblock %} 
+{% block content %}
+{% load thumbnail %}
+<div class="container col-9">
+  <h2>{{ group.title }}</h2>
+  <h3>{{ group.description|linebreaks }}</h3>
+</div>
+<br>
+    {% for post in page_obj %}
+      <div class="container col-lg-9 col-sm-12">
+        <div class="d-flex flex-row bd-highlight mb-3">
+            {% thumbnail post.image "1920x1080" crop="center" upscale=True as im %}
+              <a href="{% url 'posts:post_detail' post.pk %}">
+                <img class="card-img my-2" src="{{ im.url }}" style="width: 400px; height: 225px;">
+              </a>
+            {% endthumbnail %}
+            <ul>
+            <li class="list-item">
+              <b>Автор:</b>
+              <a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a>
+            </li>
+            <li class="list-item">
+              <b>Дата публикации:</b> {{ post.pub_date|date:"d E Y" }}
+            </li>
+            <li class="list-item">
+              <b>Описание:</b> {{ post.description }}
+            </li>
+            {% if post.group %}
+            <li class="list-item">
+              <p><b>Плейлист:</b>
+              <a href="{% url 'posts:group_list' post.group.slug %}">{{ post.group.title }}</a></p>
+            </li>
+            {% endif %}
+            </ul>
+            <p>{{ post.text|linebreaks }}</p>
+            {% if not forloop.last %}<hr>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+{% include 'posts/includes/paginator.html' %}   
+{% endblock %} 
