@@ -14,8 +14,14 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <div class="collapse navbar-collapse " id="collapsibleNavbar">
         <ul class="nav nav-pills ms-auto">
+          <li class="nav-item">
+            <form class="input-group rounded" method="get" action="{% url 'posts:search_results' %}">
+              <input type="search" class="form-control rounded" placeholder="Введите запрос" aria-label="Search" aria-describedby="search-addon"  name="q"/>
+              <button type="submit" class="btn btn-outline-primary">Найти</button>
+            </form>
+          </li>
           {% if user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}" href="{% url 'posts:post_create' %}">Новая запись</a>

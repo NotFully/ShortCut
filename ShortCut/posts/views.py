@@ -1,5 +1,7 @@
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView
 from . models import Post, Group, User, Follow, Comment
 from . forms import PostForm, CommentForm
 from django.shortcuts import redirect
@@ -9,11 +11,34 @@ from .services import open_file
 # from django.views.decorators.cache import cache_page
 
 
-# @cache_page(20, key_prefix='index_page')
+def search(request):
+    template = 'posts/search_result.html'
+    query = request.GET.get('q')
+    if query is not None:
+        object_list = Post.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+    else:
+        object_list = Post.objects.all()
+    title = 'Последние обновления на сайте'
+    paginator = Paginator(object_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'title': title,
+        'page_obj': page_obj,
+    }
+    return render(request, template, context)
+
+
 def index(request):
     template = 'posts/index.html'
+    search_query = request.GET.get("q")
+    if search_query is not None:
+        post_list = Post.objects.filter(Q(titile_icontain="search_query"))
+    else:
+        post_list = Post.objects.all()
     title = 'Последние обновления на сайте'
-    post_list = Post.objects.all()
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

@@ -30,4 +30,5 @@ urlpatterns = [
         views.profile_unfollow,
         name="profile_unfollow"
     ),
+    path('search/', views.search, name='search_results'),
 ]
