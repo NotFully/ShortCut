@@ -5,37 +5,25 @@
 {% block content %}
   {% include 'posts/includes/switcher.html' %}
   {% load thumbnail %}
-    {% for post in page_obj %}
-      <div class="container col-lg-9 col-sm-12">
-        <div class="d-flex flex-row bd-highlight mb-3">
-            {% thumbnail post.image "1920x1080" crop="center" upscale=True as im %}
-              <a href="{% url 'posts:post_detail' post.pk %}">
-                <img class="card-img my-2" src="{{ im.url }}" style="width: 400px; height: 225px;">
-              </a>
-            {% endthumbnail %}
-            <ul>
-            <li class="list-item">
-              <b>Автор:</b>
-              <a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a>
-            </li>
-            <li class="list-item">
-              <b>Дата публикации:</b> {{ post.pub_date|date:"d E Y" }}
-            </li>
-            <li class="list-item">
-              <b>Описание:</b> {{ post.description }}
-            </li>
-            {% if post.group %}
-            <li class="list-item">
-              <p><b>Группа:</b>
-              <a href="{% url 'posts:group_list' post.group.slug %}">{{ post.group.title }}</a></p>
-            </li>
-            {% endif %}
-            </ul>
-            <p>{{ post.text|linebreaks }}</p>
-            {% if not forloop.last %}<hr>{% endif %}
+    <div class="container">
+        <div class="row">
+        {% for post in page_obj %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    {% thumbnail post.image "1600" crop="center" upscale=True as im %}
+                    <a href="{% url 'posts:post_detail' post.pk %}">
+                        <img class="card-img-top" src="{{ im.url }}">
+                    </a>
+                    {% endthumbnail %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text"><a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a></p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
         </div>
-      </div>
-    {% endfor %}
+    </div>
   {% include 'posts/includes/paginator.html' %}
 {% endblock %} 
     

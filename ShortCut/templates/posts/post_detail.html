@@ -9,9 +9,24 @@
   height: 70px; /* Высота поля в пикселах */
   }
 </style>
-<div class="container col-lg-9 col-sm-12">
+<div class="container">
   <div class="row">
-    <aside class="col-12 col-md-4">
+    <div class="videoplayer col-sm">
+        {% thumbnail post.video "1600" crop="center" upscale=True as vid %}
+        <video
+                id="my-video"
+                class="video"
+                controls
+                preload="auto"
+                data-setup="{}"
+                autoplay
+            >
+          <source src="{% url 'posts:stream' post.pk %}" type="video/mp4"/>
+          <source src="{% url 'posts:stream' post.pk %}" type="video/webm"/>
+          {% endthumbnail %}
+        </video>
+    </div>
+    <div class="col-sm">
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
           <b>Дата публикации:</b><br> {{ post.pub_date|date:"d E Y" }}
@@ -27,28 +42,10 @@
           <a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a>
         </li>
         <li class="list-group-item">
-          <b>Всего постов автора:</b> {{ post.author.posts.count }}
-        </li>
-        <li class="list-group-item">
           <b>Описание:</b> <br> {{post.description}}
         </li>
       </ul>
-    </aside>
-    <article class="col-12 col-md-8">
-      {% thumbnail post.video "800x450" crop="center" upscale=True as vid %}
-      <video
-              id="my-video"
-              class="video-js"
-              controls
-              preload="auto"
-              width="800"
-              height="450"
-              data-setup="{}"
-          >
-        <source src="{% url 'posts:stream' post.pk %}" type="video/mp4"/>
-        <source src="{% url 'posts:stream' post.pk %}" type="video/webm"/>
-      </video>
-      {% endthumbnail %}
+    </div>
       <p>
         {{ post.text|linebreaks }}
       </p>
@@ -56,7 +53,8 @@
       <a href="{% url 'posts:post_edit' post.pk %}">редактировать запись</a>&nbsp;&nbsp;&nbsp;
       <a href="{% url 'posts:post_delete' post.pk %}">удалить запись</a>
       {% endif %}
-      {% if user.is_authenticated %}
+  </div>
+  {% if user.is_authenticated %}
         <div class="card my-4">
           <h6 class="card-header">Добавить комментарий:</h6>
           <div class="card-body">
@@ -89,10 +87,8 @@
               <a href="{% url 'posts:delete_comment' comment.pk %}">удалить запись</a>
               {% endif %}
               {% if not forloop.last %}<hr>{% endif %}
-              </p>
           </div>
         </div>
       {% endfor %}
-  </div>
 </div>
 {% endblock %}
